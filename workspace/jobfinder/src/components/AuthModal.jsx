@@ -39,7 +39,7 @@ export default function AuthModal({ open, onClose, onAuthSuccess, googleClientId
     const initGoogle = () => {
       if (window.google && googleBtnRef.current) {
         window.google.accounts.id.initialize({
-          client_id: googleClientId || import.meta.env.VITE_GOOGLE_CLIENT_ID || 'your-google-client-id.apps.googleusercontent.com',
+          client_id: googleClientId || import.meta.env.VITE_GOOGLE_CLIENT_ID || '288146362133-ql8r2v6p18r268gm8r2aqkfvvjdfsl0t.apps.googleusercontent.com',
           callback: handleGoogleResponse,
         })
         window.google.accounts.id.renderButton(googleBtnRef.current, {
