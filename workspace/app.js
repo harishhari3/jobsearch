@@ -167,15 +167,19 @@ function initSpeech() {
 
         if (event.error === 'network' || event.error === 'service-not-allowed' || event.error === 'audio-capture') {
             state.speechNetworkErrors = (state.speechNetworkErrors || 0) + 1;
-            showToast("Voice recognition unavailable on this network/browser. Tap ⌨️ keyboard to type your message!", 'error');
-            toggleModal('keypadModal', true);
-            const textarea = document.getElementById('keypadTextarea');
-            if (textarea) setTimeout(() => textarea.focus(), 150);
+            state.speechDisabled = true;
+            if (state.speechNetworkErrors <= 1) {
+                showToast("Voice recognition unavailable on this browser/network. Tap ⌨️ keyboard to type!", 'error');
+                toggleModal('keypadModal', true);
+                const textarea = document.getElementById('keypadTextarea');
+                if (textarea) setTimeout(() => textarea.focus(), 150);
+            }
         } else if (event.error === 'no-speech') {
-            if (state.status === 'listening' && !state.synthesis.speaking) {
+            if (state.status === 'listening' && !state.synthesis.speaking && !state.speechDisabled) {
                 restartListeningSafely();
             }
         } else if (event.error === 'not-allowed') {
+            state.speechDisabled = true;
             alert("Microphone permission was denied. Please allow microphone access in your browser settings and restart the call.");
             hangupCall();
         } else if (event.error === 'language-not-supported') {
