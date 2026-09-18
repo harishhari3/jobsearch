@@ -20,6 +20,6 @@ target/
 *.swp
 *.iml
 
-# Database
-data/
+# Database data folders (exclude backend data, keep src data)
+workspace/jobpulse-backend/data/
 *.db
