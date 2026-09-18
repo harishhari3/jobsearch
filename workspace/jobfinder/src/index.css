@@ -247,24 +247,96 @@
 }
 
 .light body {
-  background-color: #f6f7fb;
-  color: #1f2333;
+  background-color: #f8fafc;
+  color: #1e293b;
 }
 
+/* Light Mode Glass Cards */
 .light .glass {
-  background: rgba(255, 255, 255, 0.72);
-  border-color: rgba(15, 23, 42, 0.08);
-  box-shadow: 0 8px 32px -12px rgba(30, 41, 59, 0.12);
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
 }
 
 .light .glass-strong {
-  background: rgba(255, 255, 255, 0.94);
-  border-color: rgba(15, 23, 42, 0.1);
-  box-shadow: 0 20px 60px -20px rgba(30, 41, 59, 0.25);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.18);
+}
+
+/* Light Mode Text Overrides for High Contrast & Premium Readability */
+.light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
+  color: #0f172a;
+}
+
+.light .text-white {
+  color: #0f172a;
+}
+
+.light .text-slate-100,
+.light .text-slate-200,
+.light .text-slate-300 {
+  color: #1e293b;
+}
+
+.light .text-slate-400 {
+  color: #475569;
+}
+
+.light .text-slate-500 {
+  color: #64748b;
+}
+
+/* Light Mode Inputs & Form Controls */
+.light input, 
+.light select, 
+.light textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: rgba(99, 102, 241, 0.25) !important;
+}
+
+.light input::placeholder, 
+.light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Light Mode Background Overrides */
+.light .bg-white\/5 {
+  background-color: rgba(15, 23, 42, 0.04);
+}
+
+.light .bg-white\/10 {
+  background-color: rgba(15, 23, 42, 0.08);
+}
+
+.light .bg-white\/15,
+.light .bg-white\/20 {
+  background-color: rgba(15, 23, 42, 0.12);
+}
+
+.light .bg-slate-900\/50,
+.light .bg-slate-900\/90,
+.light .bg-slate-950\/80 {
+  background-color: rgba(255, 255, 255, 0.92);
+}
+
+.light .bg-black\/70 {
+  background-color: rgba(15, 23, 42, 0.5);
+}
+
+/* Light Mode Gradients & Shimmer */
+.light .gradient-text {
+  background-image: linear-gradient(100deg, #4338ca, #6d28d9, #be185d);
 }
 
 .light .shimmer-line {
-  background: linear-gradient(90deg, rgba(30, 41, 59, 0.05) 25%, rgba(30, 41, 59, 0.1) 50%, rgba(30, 41, 59, 0.05) 75%);
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0.05) 25%, rgba(30, 41, 59, 0.12) 50%, rgba(30, 41, 59, 0.05) 75%);
   background-size: 1000px 100%;
   animation: shimmer 1.8s linear infinite;
 }
+
+.light .card-shine::after {
+  background: linear-gradient(115deg, transparent 30%, rgba(99, 102, 241, 0.08) 50%, transparent 70%);
+}
+
