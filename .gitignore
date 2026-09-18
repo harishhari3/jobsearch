@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+target/
+*.jar
+*.war
+
+# Environment & Logs
+.env
+.env.local
+*.log
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.iml
+
+# Database
+data/
+*.db

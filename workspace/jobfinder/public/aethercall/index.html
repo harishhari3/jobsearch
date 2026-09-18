@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AetherCall - Premium Real-time AI Voice Assistant</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <!-- Lucide Icons (local, no CDN) -->
+    <script src="lucide.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Glass Panel -->
+        <main class="calling-card">
+            <!-- Header section -->
+            <header class="card-header">
+                <div class="brand">
+                    <div class="logo-orb"></div>
+                    <span class="brand-name">AetherCall</span>
+                </div>
+                <div class="header-controls">
+                    <div class="lang-selector-container">
+                        <select id="headerLanguageSelect" class="header-lang-select" aria-label="Conversation language">
+                            <option value="en-US">🇺🇸 EN</option>
+                            <option value="hi-IN">🇮🇳 HI</option>
+                            <option value="te-IN">🇮🇳 TE</option>
+                            <option value="ta-IN">🇮🇳 TA</option>
+                            <option value="bn-IN">🇮🇳 BN</option>
+                            <option value="es-ES">🇪🇸 ES</option>
+                            <option value="fr-FR">🇫🇷 FR</option>
+                            <option value="de-DE">🇩🇪 DE</option>
+                            <option value="it-IT">🇮🇹 IT</option>
+                            <option value="pt-BR">🇧🇷 PT</option>
+                            <option value="ja-JP">🇯🇵 JA</option>
+                            <option value="zh-CN">🇨🇳 ZH</option>
+                            <option value="ko-KR">🇰🇷 KO</option>
+                            <option value="ar-SA">🇸🇦 AR</option>
+                            <option value="ru-RU">🇷🇺 RU</option>
+                            <option value="nl-NL">🇳🇱 NL</option>
+                            <option value="tr-TR">🇹🇷 TR</option>
+                            <option value="auto">🌐 AUTO</option>
+                        </select>
+                        <span id="langUnsupportedWarn" class="lang-warn-icon hidden" title="Speech recognition in this language is not supported by your browser. Speech input will fall back to English.">
+                            <i data-lucide="alert-circle"></i>
+                        </span>
+                    </div>
+                    <div class="call-timer-container">
+                        <span class="status-dot-pulse"></span>
+                        <span id="callTimer">00:00</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Call State & Dynamic Visualizer Orb -->
+            <section class="visualizer-section">
+                <div class="visualizer-outer-ring" id="orbOuterRing">
+                    <div class="visualizer-inner-glow" id="orbInnerGlow">
+                        <canvas id="visualizerCanvas"></canvas>
+                        <div class="orb-center-icon">
+                            <i data-lucide="phone-call" id="centerIcon"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status-text-container">
+                    <h1 id="callStateLabel">Click to Start Call</h1>
+                    <p id="subStateLabel">Talk hands-free like a phone call</p>
+                </div>
+            </section>
+
+            <!-- Live Speech Transcript Bubble Preview -->
+            <section class="live-bubble-section">
+                <div class="speech-bubble user-bubble hidden" id="userBubble">
+                    <span class="bubble-speaker">You</span>
+                    <p id="userBubbleText">...</p>
+                </div>
+                <div class="speech-bubble ai-bubble hidden" id="aiBubble">
+                    <span class="bubble-speaker">Aether AI</span>
+                    <p id="aiBubbleText">...</p>
+                </div>
+            </section>
+
+            <!-- Call Controls Panel -->
+            <footer class="controls-section">
+                <!-- Secondary Controls -->
+                <div class="sec-controls">
+                    <button class="control-btn sec-btn" id="toggleTranscriptBtn" title="View Transcript">
+                        <i data-lucide="message-square"></i>
+                    </button>
+                    <button class="control-btn sec-btn" id="keypadBtn" title="Type Message">
+                        <i data-lucide="keyboard"></i>
+                    </button>
+                </div>
+
+                <!-- Primary Action Buttons -->
+                <div class="prime-controls">
+                    <button class="control-btn mute-btn disabled" id="muteBtn" title="Mute Microphone" disabled>
+                        <i data-lucide="mic"></i>
+                    </button>
+                    
+                    <button class="control-btn action-btn call-start-btn" id="actionCallBtn" title="Start Call">
+                        <i data-lucide="phone"></i>
+                    </button>
+                </div>
+
+                <!-- Settings Button -->
+                <div class="sec-controls">
+                    <button class="control-btn sec-btn" id="settingsBtn" title="Call Settings">
+                        <i data-lucide="settings"></i>
+                    </button>
+                </div>
+            </footer>
+        </main>
+
+        <!-- Sidebar Drawer for Full Chat Transcript -->
+        <aside class="transcript-drawer" id="transcriptDrawer">
+            <div class="drawer-header">
+                <h3>Call Transcript</h3>
+                <button class="close-btn" id="closeDrawerBtn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="drawer-content" id="transcriptContainer">
+                <div class="empty-transcript-message">
+                    <i data-lucide="message-square-dashed"></i>
+                    <p>No call history yet. Start a call to begin speaking.</p>
+                </div>
+            </div>
+            <div class="drawer-footer">
+                <button class="action-secondary-btn" id="clearTranscriptBtn">Clear Log</button>
+            </div>
+        </aside>
+
+        <!-- Text Input Modal (Keypad) -->
+        <div class="modal-overlay hidden" id="keypadModal">
+            <div class="modal-container text-input-modal">
+                <div class="modal-header">
+                    <h3>Type a Message</h3>
+                    <button class="modal-close" id="closeKeypadBtn"><i data-lucide="x"></i></button>
+                </div>
+                <div class="modal-body">
+                    <form id="keypadForm" onsubmit="event.preventDefault();">
+                        <textarea id="keypadTextarea" placeholder="Type what you want to say to the assistant..." rows="3"></textarea>
+                        <button type="submit" class="modal-action-btn" id="sendKeypadBtn">Send Response</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal Dialog -->
+        <div class="modal-overlay hidden" id="settingsModal">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3>Aether Settings</h3>
+                    <button class="modal-close" id="closeSettingsBtn"><i data-lucide="x"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-group">
+                        <label for="apiKeyInput">Gemini API Key</label>
+                        <div class="api-input-wrapper">
+                            <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key...">
+                            <button class="toggle-password" id="togglePasswordBtn" type="button">
+                                <i data-lucide="eye"></i>
+                            </button>
+                        </div>
+                        <span class="input-helper">Optional: voice listening works even without a key. Add a Gemini key only if you want live AI replies; otherwise Aether uses local demo responses. Get a free key from <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>.</span>
+                    </div>
+
+                    <div class="settings-group">
+                        <label for="settingsLanguageSelect">Call Language</label>
+                        <select id="settingsLanguageSelect" aria-label="Conversation language">
+                            <option value="en-US">English (United States)</option>
+                            <option value="hi-IN">Hindi (हिन्दी)</option>
+                            <option value="te-IN">Telugu (తెలుగు)</option>
+                            <option value="ta-IN">Tamil (தமிழ்)</option>
+                            <option value="bn-IN">Bengali (বাংলা)</option>
+                            <option value="es-ES">Spanish (Español)</option>
+                            <option value="fr-FR">French (Français)</option>
+                            <option value="de-DE">German (Deutsch)</option>
+                            <option value="it-IT">Italian (Italiano)</option>
+                            <option value="pt-BR">Portuguese (Português)</option>
+                            <option value="ja-JP">Japanese (日本語)</option>
+                            <option value="zh-CN">Chinese (中文)</option>
+                            <option value="ko-KR">Korean (한국어)</option>
+                            <option value="ar-SA">Arabic (العربية)</option>
+                            <option value="ru-RU">Russian (Русский)</option>
+                            <option value="nl-NL">Dutch (Nederlands)</option>
+                            <option value="tr-TR">Turkish (Türkçe)</option>
+                            <option value="auto">Auto-detect (English fallback)</option>
+                        </select>
+                        <span class="input-helper">Sets the speech recognition language and default assistant voice language.</span>
+                    </div>
+
+                    <div class="settings-group">
+                        <label for="personaSelect">Assistant Persona</label>
+                        <select id="personaSelect">
+                            <option value="assistant">Google Assistant (Polite, brief, efficient)</option>
+                            <option value="coach">Motivational Life Coach (Inspiring, warm, encourages reflection)</option>
+                            <option value="tutor">English Language Tutor (Corrects phrasing, speaks clearly, guides learning)</option>
+                            <option value="interviewer">Job Interviewer (Conducts technical/behavioral screening, asks follow-ups)</option>
+                            <option value="geek">Cyber Tech Support (Quirky, technical, problem solver)</option>
+                        </select>
+                    </div>
+
+                    <div class="settings-row">
+                        <div class="settings-group half">
+                            <label for="voiceSelect">Assistant Voice</label>
+                            <select id="voiceSelect">
+                                <option value="">Loading system voices...</option>
+                            </select>
+                        </div>
+                        <div class="settings-group half">
+                            <label for="modeToggle">AI Mode</label>
+                            <select id="modeToggle">
+                                <option value="auto">Auto (API if key present, else Demo)</option>
+                                <option value="api">Force API Mode</option>
+                                <option value="demo">Force Demo/Mock Mode</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-row">
+                        <div class="settings-group half">
+                            <label for="voiceSpeed">Speaking Rate: <span id="speedVal">1.0x</span></label>
+                            <input type="range" id="voiceSpeed" min="0.6" max="1.8" step="0.1" value="1.0">
+                        </div>
+                        <div class="settings-group half">
+                            <label for="voicePitch">Pitch Scale: <span id="pitchVal">1.0</span></label>
+                            <input type="range" id="voicePitch" min="0.5" max="1.5" step="0.1" value="1.0">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-action-btn" id="saveSettingsBtn">Save & Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Entrypoint -->
+    <script src="app.js"></script>
+</body>
+</html>
