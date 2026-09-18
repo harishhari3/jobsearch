@@ -30,8 +30,26 @@ public class SecurityConfig {
         .cors(Customizer.withDefaults())
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**", "/api/jobs/**", "/api/health", "/h2-console/**", "/error").permitAll()
-            .anyRequest().authenticated())
+            .requestMatchers(
+                "/",
+                "/index.html",
+                "/assets/**",
+                "/favicon.ico",
+                "/favicon.svg",
+                "/*.js",
+                "/*.css",
+                "/*.png",
+                "/*.jpg",
+                "/*.json",
+                "/aethercall/**",
+                "/api/auth/**",
+                "/api/jobs/**",
+                "/api/health",
+                "/h2-console/**",
+                "/error"
+            ).permitAll()
+            .requestMatchers("/api/**").authenticated()
+            .anyRequest().permitAll())
         .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
