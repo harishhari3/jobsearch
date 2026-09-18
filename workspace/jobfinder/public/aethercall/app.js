@@ -165,21 +165,18 @@ function initSpeech() {
     state.recognition.onerror = (event) => {
         console.warn("Speech Recognition Error: ", event.error);
 
-        if (event.error === 'network') {
-            // Speech service unreachable (no network / sandboxed env).
-            // Stop auto-restarting after 2 attempts and let the user type instead.
+        if (event.error === 'network' || event.error === 'service-not-allowed' || event.error === 'audio-capture') {
             state.speechNetworkErrors = (state.speechNetworkErrors || 0) + 1;
-            if (state.speechNetworkErrors >= 2) {
-                state.speechDisabled = true;
-                showToast("Voice recognition isn't reachable here — tap the keyboard button and type your message instead.", 'error');
-            }
+            showToast("Voice recognition unavailable on this network/browser. Tap ⌨️ keyboard to type your message!", 'error');
+            toggleModal('keypadModal', true);
+            const textarea = document.getElementById('keypadTextarea');
+            if (textarea) setTimeout(() => textarea.focus(), 150);
         } else if (event.error === 'no-speech') {
-            // Treat no-speech error gracefully
             if (state.status === 'listening' && !state.synthesis.speaking) {
                 restartListeningSafely();
             }
         } else if (event.error === 'not-allowed') {
-            alert("Microphone permission was denied. Please allow microphone access and restart the call.");
+            alert("Microphone permission was denied. Please allow microphone access in your browser settings and restart the call.");
             hangupCall();
         } else if (event.error === 'language-not-supported') {
             showToast(`${getLanguageName(state.settings.language)} speech input isn't supported on this browser — falling back to English.`, 'error');
