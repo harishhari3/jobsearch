@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./workspace/jobpulse-backend
+      dockerfile: Dockerfile
+    container_name: jobpulse-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVER_PORT=8080
+    restart: always
+
+  frontend:
+    build:
+      context: ./workspace/jobfinder
+      dockerfile: Dockerfile
+    container_name: jobfinder-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
