@@ -6,14 +6,13 @@ RUN npm ci
 COPY workspace/jobfinder ./
 RUN npm run build
 
-# Stage 2: Build Spring Boot Backend with React bundle embedded in static resources
+# Stage 2: Build Spring Boot Backend
 FROM maven:3.9-eclipse-temurin-17-alpine AS backend-build
 WORKDIR /app/backend
-COPY workspace/jobpulse-backend/pom.xml .
-RUN mvn dependency:go-offline -B
 COPY workspace/jobpulse-backend ./
-COPY --from=frontend-build /app/frontend/dist ./src/main/resources/static
-RUN mvn package -DskipTests -B
+RUN mkdir -p src/main/resources/static
+COPY --from=frontend-build /app/frontend/dist/ ./src/main/resources/static/
+RUN mvn clean package -DskipTests -B
 
 # Stage 3: Lightweight Production Runtime
 FROM eclipse-temurin:17-jre-alpine
